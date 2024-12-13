@@ -1,44 +1,49 @@
 package com.wrapper.business;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 public class VirtualBoxManager {
-    public void createVM(String vmName, String osType, int memory, int vram) {
-        try {
-            // Commande pour créer une VM
-            String command = String.format(
-                "VBoxManage createvm --name %s --ostype %s --register", vmName, osType
-            );
-            executeCommand(command);
 
-            // Commande pour configurer la VM
-            command = String.format(
-                "VBoxManage modifyvm %s --memory %d --vram %d --cpus 2 --nic1 nat", 
-                vmName, memory, vram
-            );
-            executeCommand(command);
-            
-            System.out.println("VM created successfully!");
-        } catch (Exception e) {
-            e.printStackTrace();
+    // Méthode pour créer une VM
+    public void createVM(String vmName, String isoPath, String ram, String storage) throws IOException {
+        if (vmName == null || vmName.isEmpty() || isoPath == null || isoPath.isEmpty() || ram == null || ram.isEmpty()
+                || storage == null || storage.isEmpty()) {
+            throw new IllegalArgumentException("VM Name, ISO Path, RAM and Storage cannot be empty");
         }
+
+        // Commandes pour créer la VM et attacher l'ISO
+        String createVMCommand = String.format("VBoxManage createvm --name %s --register", vmName);
+        String setMemoryCommand = String.format("VBoxManage modifyvm %s --memory %s", vmName, ram); // Ajout de la RAM
+        String setStorageCommand = String.format(
+                "VBoxManage createhd --filename \"%s/VirtualBox-VMs/%s/%s.vdi\" --size %s",
+                System.getProperty("user.home"), vmName, vmName, storage); // Création du disque dur
+                                                                           // virtuel
+        String attachIsoCommand = String
+                .format("VBoxManage storagectl %s --name \"IDE Controller\" --add ide --controller PIIX4", vmName); // Contrôleur
+                                                                                                                    // IDE
+        String attachIsoDriveCommand = String.format(
+                "VBoxManage storageattach %s --storagectl \"IDE Controller\" --port 0 --device 0 --type dvddrive --medium \"%s\"",
+                vmName, isoPath); // Attachement de l'ISO
+
+        // Exécution des commandes
+        executeCommand(createVMCommand);
+        executeCommand(setMemoryCommand); // Allocation de la RAM
+        executeCommand(setStorageCommand); // Création du disque dur virtuel
+        executeCommand(attachIsoCommand);
+        executeCommand(attachIsoDriveCommand);
+
+        System.out.println("VM Created Successfully: " + vmName);
     }
 
-    private void executeCommand(String command) throws IOException, InterruptedException {
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command("bash", "-c", command);
+    // Méthode pour exécuter une commande shell
+    private void executeCommand(String command) throws IOException {
+        Process process = Runtime.getRuntime().exec(command);
 
-        Process process = processBuilder.start();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            System.out.println(line);
-        }
-        int exitCode = process.waitFor();
-        if (exitCode != 0) {
-            throw new RuntimeException("Command failed with exit code " + exitCode);
+        System.out.println("Executing command: " + command);
+        try {
+            process.waitFor();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
