@@ -3,36 +3,66 @@ package com.wrapper.controllers;
 import com.wrapper.business.VirtualBoxManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.scene.control.Button;
 import javafx.event.ActionEvent;
+
+import java.io.File;
 import java.io.IOException;
 
 public class MainWindowController {
 
     @FXML
-    private TextField vmNameField;   // Champ pour le nom de la VM
+    private TextField vmNameField; // Field for the VM name
 
     @FXML
-    private TextField isoPathField;  // Champ pour le chemin de l'ISO
+    private TextField isoPathField; // Field for the ISO path
 
     @FXML
-    private TextField vramField;      // Champ pour la RAM
+    private TextField vramField; // Field for the RAM
 
     @FXML
-    private TextField memoryField;  // Champ pour le stockage
+    private TextField memoryField; // Field for the storage
 
     @FXML
-    private Button createButton;     // Bouton pour créer la VM
+    private Button createButton; // Button to create the VM
 
-    // Instance de VirtualBoxManager pour gérer la logique métier
+    // Instance of VirtualBoxManager to handle business logic
     private VirtualBoxManager virtualBoxManager;
 
-    // Constructeur
+    // Constructor
     public MainWindowController() {
         this.virtualBoxManager = new VirtualBoxManager();
     }
 
-    // Méthode pour gérer la création de la VM
+    /**
+     * Handle the browse ISO button click event
+     */
+    @FXML
+    public void handleBrowseIso() {
+        // Initialize a file chooser
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select ISO File");
+
+        // Add a filter to show only ISO files
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("ISO Files", "*.iso"));
+
+        // Open the dialog to select a file
+        File selectedFile = fileChooser.showOpenDialog(new Stage());
+
+        // If a file has been selected, update the text field
+        if (selectedFile != null) {
+            isoPathField.setText(selectedFile.getAbsolutePath());
+        }
+    }
+
+    /**
+     * Handle the create VM button click event
+     * 
+     * @param event
+     */
     @FXML
     private void handleCreateVM(ActionEvent event) {
         String vmName = vmNameField.getText();
@@ -40,14 +70,14 @@ public class MainWindowController {
         String ram = vramField.getText();
         String storage = memoryField.getText();
 
-        // Vérifie que les champs ne sont pas vides
+        // Check that the fields are not empty
         if (vmName.isEmpty() || isoPath.isEmpty() || ram.isEmpty() || storage.isEmpty()) {
             System.out.println("Please fill in all fields!");
             return;
         }
 
         try {
-            // Utilise VirtualBoxManager pour créer la VM
+            // Use VirtualBoxManager to create the VM
             virtualBoxManager.createVM(vmName, isoPath, ram, storage);
         } catch (IOException e) {
             e.printStackTrace();

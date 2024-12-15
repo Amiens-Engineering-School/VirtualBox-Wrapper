@@ -30,7 +30,7 @@
                 
                 <Label text="ISO Path:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
                 <TextField fx:id="isoPathField" promptText="Path to ISO file" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                <Button fx:id="browseIsoButton" text="Browse" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                <Button fx:id="browseIsoButton" text="Browse" onAction="#handleBrowseIso" GridPane.columnIndex="2" GridPane.rowIndex="4" />
                 
                 <Button fx:id="createButton" onAction="#handleCreateVM" text="Create VM" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                   <columnConstraints>
