@@ -1,37 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
 <VBox id="com.wrapper.fxml.mainWindow" fx:id="mainWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="999.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wrapper.controllers.MainWindowController">
    <children>
       <TabPane tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml/1">
     <tabs>
         <Tab text="Create">
-        <GridPane hgap="10" vgap="10" alignment="CENTER">
-                <Label text="VM Name:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
-                <TextField fx:id="vmNameField" promptText="VM Name" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+        <GridPane alignment="CENTER" hgap="10" prefHeight="655.0" prefWidth="999.0" vgap="10">
+                <Label text="VM Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <TextField fx:id="vmNameField" promptText="VM Name" GridPane.columnIndex="1" GridPane.rowIndex="0" />
                 
-                <Label text="OS Type:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
-                <TextField fx:id="osTypeField" promptText="OS Type (e.g., Ubuntu_64)" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                <Label text="OS Type:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <TextField fx:id="osTypeField" promptText="OS Type (e.g., Ubuntu_64)" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                 
-                <Label text="Memory (MB):" GridPane.rowIndex="2" GridPane.columnIndex="0" />
-                <TextField fx:id="memoryField" promptText="Memory (in MB)" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+                <Label text="Memory (MB):" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <TextField fx:id="memoryField" promptText="Memory (in MB)" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                 
-                <Label text="VRAM (MB):" GridPane.rowIndex="3" GridPane.columnIndex="0" />
-                <TextField fx:id="vramField" promptText="VRAM (in MB)" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+                <Label text="VRAM (MB):" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                <TextField fx:id="vramField" promptText="VRAM (in MB)" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                 
-                <Label text="ISO Path:" GridPane.rowIndex="4" GridPane.columnIndex="0" />
-                <TextField fx:id="isoPathField" promptText="Path to ISO file" GridPane.rowIndex="4" GridPane.columnIndex="1" />
-                <Button text="Browse" GridPane.rowIndex="4" GridPane.columnIndex="2" fx:id="browseIsoButton" />
+                <Label text="ISO Path:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                <TextField fx:id="isoPathField" promptText="Path to ISO file" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <Button fx:id="browseIsoButton" text="Browse" GridPane.columnIndex="2" GridPane.rowIndex="4" />
                 
-                <Button fx:id="createButton" text="Create VM" GridPane.rowIndex="5" GridPane.columnIndex="1" onAction="#handleCreateVM" />
+                <Button fx:id="createButton" onAction="#handleCreateVM" text="Create VM" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                  <columnConstraints>
+                     <ColumnConstraints />
+                     <ColumnConstraints />
+                     <ColumnConstraints />
+                  </columnConstraints>
+                  <rowConstraints>
+                     <RowConstraints />
+                     <RowConstraints />
+                     <RowConstraints />
+                     <RowConstraints />
+                     <RowConstraints />
+                     <RowConstraints />
+                  </rowConstraints>
             </GridPane>
           </Tab>
         
