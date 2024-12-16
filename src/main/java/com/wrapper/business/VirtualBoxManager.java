@@ -8,6 +8,20 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class VirtualBoxManager {
+    /**
+     * Allows you to clone an existing VM
+     * 
+     * @param vmName
+     * @param cloneName
+     */
+    public void clone(String vmName, String cloneName) {
+        try {
+            executeCommand(new String[] { "VBoxManage", "clonevm", vmName, "--name", cloneName, "--register" });
+
+        } catch (IOException e) {
+            throw new IllegalStateException("Error cloning VM: " + e.getMessage(), e);
+        }
+    }
 
     /**
      * Method to create a VM in VirtualBox

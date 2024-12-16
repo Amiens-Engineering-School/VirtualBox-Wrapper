@@ -24,14 +24,29 @@ import java.net.URISyntaxException;
 public class MainWindowController {
     @FXML
     private Hyperlink githubLink = new Hyperlink();
+
     @FXML
     private ComboBox<String> vmList = new ComboBox<>();
+
     @FXML
+    private TextField vmNameField = new TextField();
+
+    @FXML
+    private TextField memoryField = new TextField();
+
     private TextField vmNameEditionField = new TextField();
+
     @FXML
     private TextField memoryEditionField = new TextField();
+
     @FXML
     private TextField cpuField = new TextField();
+
+    @FXML
+    private TextField originalVmNameField; // Field to enter the name of the original VM for cloning
+
+    @FXML
+    private TextField cloneVmNameField; // Field to enter the name of the cloned VM
 
     @FXML
     private TextField vmNameCreationField; // Field for the VM name during creation
@@ -207,5 +222,24 @@ public class MainWindowController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    @FXML
+    public void handleCloneVirtualMachine() {
+        String originalVmName = originalVmNameField.getText();
+        String cloneVmName = cloneVmNameField.getText();
+
+        if (originalVmName.isEmpty() || cloneVmName.isEmpty()) {
+            showError("Please enter the original VM name and the clone VM name.");
+            return;
+        }
+
+        try {
+            virtualBoxManager.clone(originalVmName, cloneVmName);
+            showSuccess("VM cloned successfully!");
+
+        } catch (IllegalStateException e) {
+            showError("Failed to clone VM: " + e.getMessage());
+        }
     }
 }
