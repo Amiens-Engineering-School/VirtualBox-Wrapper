@@ -82,20 +82,22 @@ public class VirtualBoxManager {
      * @param isoPath
      * @param ram
      * @param storage
+     * @param cpuAmount
      * @throws IOException
      */
-    public void createVM(String vmName, String isoPath, String ram, String storage) throws IOException {
+    public void createVM(String vmName, String isoPath, String ram, String storage, String cpuAmount)
+            throws IOException {
         if (vmName == null || vmName.isEmpty() || isoPath == null || isoPath.isEmpty() || ram == null || ram.isEmpty()
-                || storage == null || storage.isEmpty()) {
+                || storage == null || storage.isEmpty())
             throw new IllegalArgumentException("VM Name, ISO Path, RAM and Storage cannot be empty");
-        }
 
         String vdiPath = String.format("%s/VirtualBox-VMs/%s/%s.vdi", System.getProperty("user.home"), vmName, vmName);
-        if (Files.exists(Paths.get(vdiPath))) {
+
+        if (Files.exists(Paths.get(vdiPath)))
             throw new IllegalStateException("The virtual disk already exists at: " + vdiPath);
-        }
 
         String[] createVMCommand = { "VBoxManage", "createvm", "--name", vmName, "--register" };
+        String[] setCpuAmountCommand = { "VBoxManage", "modifyvm", vmName, "--cpus", cpuAmount };
         String[] setMemoryCommand = { "VBoxManage", "modifyvm", vmName, "--memory", ram };
         String[] setStorageCommand = { "VBoxManage", "createhd", "--filename", vdiPath, "--size", storage };
         String[] attachIsoCommand = { "VBoxManage", "storagectl", vmName, "--name", "IDE Controller", "--add", "ide",
@@ -105,12 +107,11 @@ public class VirtualBoxManager {
                 "--device", "0", "--type", "dvddrive", "--medium", isoPath };
 
         executeCommand(createVMCommand);
+        executeCommand(setCpuAmountCommand);
         executeCommand(setMemoryCommand);
         executeCommand(setStorageCommand);
         executeCommand(attachIsoCommand);
         executeCommand(attachIsoDriveCommand);
-
-        System.out.println("VM Created Successfully: " + vmName);
     }
 
     /**

@@ -50,6 +50,9 @@ public class MainWindowController {
     private TextField vmNameCreationField; // Field for the VM name during creation
 
     @FXML
+    private TextField cpuAmountCreationField; // Field for the CPU count during creation
+
+    @FXML
     private TextField isoPathField; // Field for the ISO path during creation
 
     @FXML
@@ -102,23 +105,36 @@ public class MainWindowController {
         String isoPath = isoPathField.getText();
         String ram = vramField.getText();
         String storage = memoryCreationField.getText();
+        String cpu = cpuAmountCreationField.getText();
 
         // Check that the fields are not empty
-        if (vmName.isEmpty() || isoPath.isEmpty() || ram.isEmpty() || storage.isEmpty()) {
-            System.out.println("Please fill in all fields!");
+        if (vmName.isEmpty() || isoPath.isEmpty() || ram.isEmpty() || storage.isEmpty() || cpu.isEmpty()) {
+            alertError("Please fill all the fields.");
             return;
         }
 
         try {
             // Use VirtualBoxManager to create the VM
-            virtualBoxManager.createVM(vmName, isoPath, ram, storage);
+            virtualBoxManager.createVM(vmName, isoPath, ram, storage, cpuAmountCreationField.getText());
+
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Error creating VM: " + e.getMessage());
+            alertError("Failed to create VM: " + e.getMessage());
+
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
-            System.out.println(e.getMessage());
+            alertError("Failed to create VM: " + e.getMessage());
         }
+
+        // Show a success message
+        alertSuccess("VM created successfully!");
+
+        // Clear the fields
+        vmNameCreationField.clear();
+        isoPathField.clear();
+        vramField.clear();
+        memoryCreationField.clear();
+        cpuAmountCreationField.clear();
     }
 
     @FXML
@@ -146,7 +162,7 @@ public class MainWindowController {
             vmList.getItems().addAll(virtualBoxManager.getAvailableVirtualMachines());
 
         } catch (IllegalStateException e) {
-            showError("Failed to load virtual machines: " + e.getMessage());
+            alertError("Failed to load virtual machines: " + e.getMessage());
         }
     }
 
@@ -161,20 +177,20 @@ public class MainWindowController {
         String newCpuCount = cpuField.getText();
 
         if (vmName == null || vmName.isEmpty()) {
-            showError("Please select a VM to edit.");
+            alertError("Please select a VM to edit.");
             return;
         }
 
         try {
             virtualBoxManager.editVirtualMachine(vmName, newVmName, newMemory, newCpuCount);
-            showSuccess("VM edited successfully!");
+            alertSuccess("VM edited successfully!");
 
         } catch (IllegalStateException e) {
-            showError("Failed to edit VM: " + e.getMessage());
+            alertError("Failed to edit VM: " + e.getMessage());
         }
     }
 
-    private void showError(String message) {
+    private void alertError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText(null);
@@ -182,7 +198,7 @@ public class MainWindowController {
         alert.showAndWait();
     }
 
-    private void showSuccess(String message) {
+    private void alertSuccess(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Success");
         alert.setHeaderText(null);
@@ -196,16 +212,16 @@ public class MainWindowController {
         String cloneVmName = cloneVmNameField.getText();
 
         if (originalVmName.isEmpty() || cloneVmName.isEmpty()) {
-            showError("Please enter the original VM name and the clone VM name.");
+            alertError("Please enter the original VM name and the clone VM name.");
             return;
         }
 
         try {
             virtualBoxManager.clone(originalVmName, cloneVmName);
-            showSuccess("VM cloned successfully!");
+            alertSuccess("VM cloned successfully!");
 
         } catch (IllegalStateException e) {
-            showError("Failed to clone VM: " + e.getMessage());
+            alertError("Failed to clone VM: " + e.getMessage());
         }
     }
 }

@@ -24,8 +24,8 @@
                   <Label text="VM Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
                   <TextField fx:id="vmNameCreationField" promptText="VM Name" GridPane.columnIndex="1" GridPane.rowIndex="0" />
                   
-                  <Label text="OS Type:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                  <TextField fx:id="osTypeField" promptText="OS Type (e.g., Ubuntu_64)" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label text="CPU amount" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                  <TextField fx:id="cpuAmountCreationField" promptText="4" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   
                   <Label text="Memory (MB):" GridPane.columnIndex="0" GridPane.rowIndex="2" />
                   <TextField fx:id="memoryCreationField" promptText="Memory (in MB)" GridPane.columnIndex="1" GridPane.rowIndex="2" />
