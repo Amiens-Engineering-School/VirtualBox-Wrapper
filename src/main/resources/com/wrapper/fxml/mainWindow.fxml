@@ -3,19 +3,56 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox id="com.wrapper.fxml.mainWindow" fx:id="mainWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="999.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wrapper.controllers.MainWindowController">
+<VBox id="com.wrapper.fxml.mainWindow" fx:id="mainWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="999.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wrapper.controllers.MainWindowController">
    <children>
       <TabPane prefHeight="749.0" prefWidth="999.0" tabClosingPolicy="UNAVAILABLE">
-        <tabs>
-            <Tab text="Create" />
+         <tabs>
+            <Tab text="Create">
+               <GridPane alignment="CENTER" hgap="10" prefHeight="655.0" prefWidth="999.0" vgap="10">
+                  <Label text="VM Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                  <TextField fx:id="vmNameCreationField" promptText="VM Name" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                  
+                  <Label text="OS Type:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                  <TextField fx:id="osTypeField" promptText="OS Type (e.g., Ubuntu_64)" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  
+                  <Label text="Memory (MB):" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                  <TextField fx:id="memoryCreationField" promptText="Memory (in MB)" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  
+                  <Label text="VRAM (MB):" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                  <TextField fx:id="vramField" promptText="VRAM (in MB)" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  
+                  <Label text="ISO Path:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                  <TextField fx:id="isoPathField" promptText="Path to ISO file" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <Button fx:id="browseIsoButton" onAction="#handleBrowseIso" text="Browse" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                  
+                  <Button fx:id="createButton" onAction="#handleCreateVM" text="Create VM" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                  <columnConstraints>
+                     <ColumnConstraints />
+                     <ColumnConstraints />
+                     <ColumnConstraints />
+                  </columnConstraints>
+                  <rowConstraints>
+                     <RowConstraints />
+                     <RowConstraints />
+                     <RowConstraints />
+                     <RowConstraints />
+                     <RowConstraints />
+                     <RowConstraints />
+                  </rowConstraints>
+               </GridPane>
+            </Tab>
 
             <Tab text="Edit">
                <content>
@@ -32,13 +69,13 @@
                               <Font size="14.0" />
                            </font>
                         </Text>
-                        <TextField fx:id="vmNameField" layoutX="425.0" layoutY="269.0" AnchorPane.leftAnchor="425.0" />
+                        <TextField fx:id="vmNameEditionField" layoutX="425.0" layoutY="269.0" AnchorPane.leftAnchor="425.0" />
                         <Text layoutX="425.0" layoutY="313.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Adjust Memory (MB)" AnchorPane.leftAnchor="425.0">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Text>
-                        <TextField fx:id="memoryField" layoutX="425.0" layoutY="317.0" AnchorPane.leftAnchor="425.0" />
+                        <TextField fx:id="memoryEditionField" layoutX="425.0" layoutY="317.0" AnchorPane.leftAnchor="425.0" />
                         <Text layoutX="425.0" layoutY="365.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Set CPU Count" AnchorPane.leftAnchor="425.0">
                            <font>
                               <Font size="14.0" />
@@ -57,14 +94,16 @@
                         </Button>
                      </children>
                   </AnchorPane>
-               </content></Tab>
+               </content>
+            </Tab>
 
             <Tab text="Clone" />
-          <Tab text="About">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" onMouseClicked="#onGithubLinkClicked" prefHeight="487.0" prefWidth="999.0">
+
+            <Tab text="About">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" onMouseClicked="#onGithubLinkClicked" prefHeight="487.0" prefWidth="999.0">
                      <children>
-                        <Text layoutX="14.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="virtualbox wrapper" wrappingWidth="222.2820587158203" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="20.0">
+                        <Text layoutX="14.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="virtualbox wrapper" wrappingWidth="270.2820587158203" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="20.0">
                            <font>
                               <Font name="System Bold Italic" size="24.0" />
                            </font>
@@ -84,11 +123,12 @@
                               <Font size="14.0" />
                            </font>
                         </Text>
-                        <Hyperlink fx:id="githubLink" layoutX="458.0" layoutY="104.0" prefHeight="14.0" prefWidth="50.0" text="Github" />
-                     </children></AnchorPane>
-            </content>
-          </Tab>
-        </tabs>
+                        <Hyperlink fx:id="githubLink" layoutX="522.0" layoutY="104.0" prefHeight="22.0" prefWidth="72.0" text="Github" />
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+         </tabs>
       </TabPane>
    </children>
 </VBox>
