@@ -35,8 +35,10 @@ public class MainWindowController {
     private TextField memoryField = new TextField();
 
     private TextField vmNameEditionField = new TextField();
+
     @FXML
     private TextField memoryEditionField = new TextField();
+
     @FXML
     private TextField cpuField = new TextField();
 
@@ -46,6 +48,7 @@ public class MainWindowController {
     @FXML
     private TextField cloneVmNameField; // Field to enter the name of the cloned VM
 
+    @FXML
     private TextField vmNameCreationField; // Field for the VM name during creation
 
     @FXML
