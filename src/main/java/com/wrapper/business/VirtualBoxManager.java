@@ -22,7 +22,7 @@ public class VirtualBoxManager {
             throw new IllegalStateException("Error cloning VM: " + e.getMessage(), e);
         }
     }
-    
+
     /**
      * Method to create a VM in VirtualBox
      * 
