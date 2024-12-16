@@ -82,7 +82,7 @@
                            </font>
                         </Text>
                         <TextField fx:id="cpuField" layoutX="425.0" layoutY="369.0" AnchorPane.leftAnchor="425.0" />
-                        <Button layoutX="425.0" layoutY="406.0" mnemonicParsing="false" onMouseClicked="#applyChanges" text="Apply changes" AnchorPane.leftAnchor="425.0">
+                        <Button layoutX="425.0" layoutY="406.0" mnemonicParsing="false" onMouseClicked="#handleEditVirtualMachineButton" text="Apply changes" AnchorPane.leftAnchor="425.0">
                            <font>
                               <Font size="14.0" />
                            </font>
