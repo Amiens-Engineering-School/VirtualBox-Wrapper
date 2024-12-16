@@ -16,8 +16,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Hyperlink;
 
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -50,6 +48,9 @@ public class MainWindowController {
 
     @FXML
     private TextField vmNameCreationField; // Field for the VM name during creation
+
+    @FXML
+    private TextField cpuAmountCreationField; // Field for the CPU count during creation
 
     @FXML
     private TextField isoPathField; // Field for the ISO path during creation
@@ -104,23 +105,36 @@ public class MainWindowController {
         String isoPath = isoPathField.getText();
         String ram = vramField.getText();
         String storage = memoryCreationField.getText();
+        String cpu = cpuAmountCreationField.getText();
 
         // Check that the fields are not empty
-        if (vmName.isEmpty() || isoPath.isEmpty() || ram.isEmpty() || storage.isEmpty()) {
-            System.out.println("Please fill in all fields!");
+        if (vmName.isEmpty() || isoPath.isEmpty() || ram.isEmpty() || storage.isEmpty() || cpu.isEmpty()) {
+            alertError("Please fill all the fields.");
             return;
         }
 
         try {
             // Use VirtualBoxManager to create the VM
-            virtualBoxManager.createVM(vmName, isoPath, ram, storage);
+            virtualBoxManager.createVM(vmName, isoPath, ram, storage, cpuAmountCreationField.getText());
+
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Error creating VM: " + e.getMessage());
+            alertError("Failed to create VM: " + e.getMessage());
+
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
-            System.out.println(e.getMessage());
+            alertError("Failed to create VM: " + e.getMessage());
         }
+
+        // Show a success message
+        alertSuccess("VM created successfully!");
+
+        // Clear the fields
+        vmNameCreationField.clear();
+        isoPathField.clear();
+        vramField.clear();
+        memoryCreationField.clear();
+        cpuAmountCreationField.clear();
     }
 
     @FXML
@@ -139,76 +153,44 @@ public class MainWindowController {
     public void initialize() {
         // Load the list of virtual machines
         vmList.getItems().clear();
-        this.loadVirtualMachines();
+        this.addVirtualMachinesToCombobox();
     }
 
-    private void loadVirtualMachines() {
+    private void addVirtualMachinesToCombobox() {
         try {
-            // Command to list virtual machines
-            Process process = Runtime.getRuntime().exec("VBoxManage list vms");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                // Extract the name of the virtual machine
-                String vmName = line.split("\"")[1];
-                vmList.getItems().add(vmName);
-            }
-        } catch (IOException e) {
-            // showError("Failed to load virtual machines: " + e.getMessage());
-            System.out.println("Failed to load virtual machines: " + e.getMessage());
-            ;
+            // Retrieve the list of available virtual machines
+            vmList.getItems().addAll(virtualBoxManager.getAvailableVirtualMachines());
+
+        } catch (IllegalStateException e) {
+            alertError("Failed to load virtual machines: " + e.getMessage());
         }
     }
 
+    /**
+     * Handle the edit VM button click event
+     */
     @FXML
-    private void applyChanges() {
-        String selectedVM = vmList.getValue();
-        String newName = vmNameEditionField.getText();
-        String memory = memoryEditionField.getText();
-        String cpuCount = cpuField.getText();
+    private void handleEditVirtualMachineButton() {
+        String vmName = vmList.getValue();
+        String newVmName = vmNameEditionField.getText();
+        String newMemory = memoryEditionField.getText();
+        String newCpuCount = cpuField.getText();
 
-        if (selectedVM == null) {
-            showError("Please select a virtual machine.");
+        if (vmName == null || vmName.isEmpty()) {
+            alertError("Please select a VM to edit.");
             return;
         }
 
         try {
-            // Modify the VM name
-            if (!newName.isEmpty()) {
-                Process renameProcess = Runtime.getRuntime().exec(
-                        "VBoxManage modifyvm \"" + selectedVM + "\" --name \""
-                                + newName + "\"");
-                renameProcess.waitFor();
-            }
+            virtualBoxManager.editVirtualMachine(vmName, newVmName, newMemory, newCpuCount);
+            alertSuccess("VM edited successfully!");
 
-            // Modify the VM memory
-            if (!memory.isEmpty()) {
-                Process memoryProcess = Runtime.getRuntime().exec(
-                        "VBoxManage modifyvm \"" + selectedVM + "\" --memory "
-                                + memory);
-                memoryProcess.waitFor();
-            }
-
-            // Modify the VM CPU count
-            if (!cpuCount.isEmpty()) {
-                Process cpuProcess = Runtime.getRuntime().exec(
-                        "VBoxManage modifyvm \"" + selectedVM + "\" --cpus "
-                                + cpuCount);
-                cpuProcess.waitFor();
-            }
-
-            vmList.getItems().clear();
-            vmNameEditionField.clear();
-            memoryEditionField.clear();
-            cpuField.clear();
-
-            showSuccess("Changes applied successfully!");
-        } catch (IOException | InterruptedException e) {
-            showError("Failed to apply changes: " + e.getMessage());
+        } catch (IllegalStateException e) {
+            alertError("Failed to edit VM: " + e.getMessage());
         }
     }
 
-    private void showError(String message) {
+    private void alertError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText(null);
@@ -216,7 +198,7 @@ public class MainWindowController {
         alert.showAndWait();
     }
 
-    private void showSuccess(String message) {
+    private void alertSuccess(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Success");
         alert.setHeaderText(null);
@@ -230,16 +212,16 @@ public class MainWindowController {
         String cloneVmName = cloneVmNameField.getText();
 
         if (originalVmName.isEmpty() || cloneVmName.isEmpty()) {
-            showError("Please enter the original VM name and the clone VM name.");
+            alertError("Please enter the original VM name and the clone VM name.");
             return;
         }
 
         try {
             virtualBoxManager.clone(originalVmName, cloneVmName);
-            showSuccess("VM cloned successfully!");
+            alertSuccess("VM cloned successfully!");
 
         } catch (IllegalStateException e) {
-            showError("Failed to clone VM: " + e.getMessage());
+            alertError("Failed to clone VM: " + e.getMessage());
         }
     }
 }
