@@ -4,8 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class VirtualBoxManager {
     /**
@@ -20,6 +24,54 @@ public class VirtualBoxManager {
 
         } catch (IOException e) {
             throw new IllegalStateException("Error cloning VM: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Allows you to retrieve the list of available virtual machines
+     * 
+     * @return List of available virtual machines
+     */
+    public List<String> getAvailableVirtualMachines() {
+        List<String> vmList = new ArrayList<>();
+        try {
+            Process process = new ProcessBuilder("VBoxManage", "list", "vms").start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                // Extract VM name from the line and add to the list
+                String vmName = line.split("\"")[1];
+                vmList.add(vmName);
+            }
+
+        } catch (IOException e) {
+            throw new IllegalStateException("Error getting VMs: " + e.getMessage(), e);
+        }
+
+        return vmList;
+    }
+
+    /**
+     * Allows you to edit a VM in VirtualBox
+     */
+    public void editVirtualMachine(String originalVmName, String newVmName, String newMemory, String newCpuCount) {
+        try {
+            // Modify the VM name
+            if (newVmName != null && !newVmName.isEmpty())
+                executeCommand(new String[] { "VBoxManage", "modifyvm", originalVmName, "--name", newVmName });
+
+            // Modify the VM memory
+            if (newVmName != null && !newVmName.isEmpty())
+                executeCommand(new String[] { "VBoxManage", "modifyvm", originalVmName, "--memory", newVmName });
+
+            // Modify the VM CPU count
+            if (newVmName != null && !newVmName.isEmpty())
+                executeCommand(new String[] { "VBoxManage", "modifyvm", originalVmName, "--cpus", newVmName });
+
+        } catch (IOException e) {
+            throw new IllegalStateException("Error editing VM: " + e.getMessage(), e);
         }
     }
 

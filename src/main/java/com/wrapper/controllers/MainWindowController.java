@@ -16,8 +16,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Hyperlink;
 
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -139,72 +137,40 @@ public class MainWindowController {
     public void initialize() {
         // Load the list of virtual machines
         vmList.getItems().clear();
-        this.loadVirtualMachines();
+        this.addVirtualMachinesToCombobox();
     }
 
-    private void loadVirtualMachines() {
+    private void addVirtualMachinesToCombobox() {
         try {
-            // Command to list virtual machines
-            Process process = Runtime.getRuntime().exec("VBoxManage list vms");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                // Extract the name of the virtual machine
-                String vmName = line.split("\"")[1];
-                vmList.getItems().add(vmName);
-            }
-        } catch (IOException e) {
-            // showError("Failed to load virtual machines: " + e.getMessage());
-            System.out.println("Failed to load virtual machines: " + e.getMessage());
-            ;
+            // Retrieve the list of available virtual machines
+            vmList.getItems().addAll(virtualBoxManager.getAvailableVirtualMachines());
+
+        } catch (IllegalStateException e) {
+            showError("Failed to load virtual machines: " + e.getMessage());
         }
     }
 
+    /**
+     * Handle the edit VM button click event
+     */
     @FXML
-    private void applyChanges() {
-        String selectedVM = vmList.getValue();
-        String newName = vmNameEditionField.getText();
-        String memory = memoryEditionField.getText();
-        String cpuCount = cpuField.getText();
+    private void handleEditVirtualMachineButton() {
+        String vmName = vmList.getValue();
+        String newVmName = vmNameEditionField.getText();
+        String newMemory = memoryEditionField.getText();
+        String newCpuCount = cpuField.getText();
 
-        if (selectedVM == null) {
-            showError("Please select a virtual machine.");
+        if (vmName == null || vmName.isEmpty()) {
+            showError("Please select a VM to edit.");
             return;
         }
 
         try {
-            // Modify the VM name
-            if (!newName.isEmpty()) {
-                Process renameProcess = Runtime.getRuntime().exec(
-                        "VBoxManage modifyvm \"" + selectedVM + "\" --name \""
-                                + newName + "\"");
-                renameProcess.waitFor();
-            }
+            virtualBoxManager.editVirtualMachine(vmName, newVmName, newMemory, newCpuCount);
+            showSuccess("VM edited successfully!");
 
-            // Modify the VM memory
-            if (!memory.isEmpty()) {
-                Process memoryProcess = Runtime.getRuntime().exec(
-                        "VBoxManage modifyvm \"" + selectedVM + "\" --memory "
-                                + memory);
-                memoryProcess.waitFor();
-            }
-
-            // Modify the VM CPU count
-            if (!cpuCount.isEmpty()) {
-                Process cpuProcess = Runtime.getRuntime().exec(
-                        "VBoxManage modifyvm \"" + selectedVM + "\" --cpus "
-                                + cpuCount);
-                cpuProcess.waitFor();
-            }
-
-            vmList.getItems().clear();
-            vmNameEditionField.clear();
-            memoryEditionField.clear();
-            cpuField.clear();
-
-            showSuccess("Changes applied successfully!");
-        } catch (IOException | InterruptedException e) {
-            showError("Failed to apply changes: " + e.getMessage());
+        } catch (IllegalStateException e) {
+            showError("Failed to edit VM: " + e.getMessage());
         }
     }
 
